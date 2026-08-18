@@ -12,6 +12,8 @@ import 'package:ecommerce/presentation/home/bindings/home_binding.dart';
 import 'package:ecommerce/presentation/home/views/home_view.dart';
 import 'package:ecommerce/presentation/onboarding/bindings/onboarding_binding.dart';
 import 'package:ecommerce/presentation/onboarding/views/onboarding_view.dart';
+import 'package:ecommerce/presentation/product_detail/bindings/product_detail_binding.dart';
+import 'package:ecommerce/presentation/product_detail/views/product_detail_view.dart';
 import 'package:ecommerce/presentation/splash/bindings/splash_binding.dart';
 import 'package:ecommerce/presentation/splash/views/splash_view.dart';
 
@@ -66,6 +68,12 @@ class AppPages {
       page: () => const HomeView(),
       binding: HomeBinding(),
       transition: Transition.fadeIn,
+    ),
+    GetPage(
+      name: Routes.productDetail,
+      page: () => const ProductDetailView(),
+      binding: ProductDetailBinding(),
+      transition: Transition.rightToLeftWithFade,
     ),
   ];
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ecommerce/app/routes/app_routes.dart';
 import 'package:ecommerce/domain/entities/product_entity.dart';
 import 'package:ecommerce/presentation/home/controllers/home_controller.dart';
 
@@ -276,9 +277,11 @@ class HomeView extends GetView<HomeController> {
   }
 
   Widget _buildProductCard(ProductEntity product) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+    return GestureDetector(
+      onTap: () => Get.toNamed(Routes.productDetail, arguments: product),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
         // Image Container (161 x 174, border radius 12, background #F6F6F6, with Heart Icon)
         Expanded(
           child: Container(
@@ -382,8 +385,9 @@ class HomeView extends GetView<HomeController> {
           ),
         ),
       ],
-    );
-  }
+    ),
+  );
+}
 
   String _formatCategoryName(String raw) {
     if (raw == 'All') return 'All';
