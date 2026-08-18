@@ -1,8 +1,13 @@
 import 'package:get/get.dart';
 import 'package:ecommerce/core/widgets/app_snackbar.dart';
+import 'package:ecommerce/data/datasources/user_store_datasource.dart';
 import 'package:ecommerce/domain/entities/product_entity.dart';
+import 'package:ecommerce/presentation/home/controllers/home_controller.dart';
 
 class ProductDetailController extends GetxController {
+  final UserStoreDataSource userStoreDataSource =
+      Get.find<UserStoreDataSource>();
+
   late final ProductEntity product;
 
   final List<String> sizes = const ['S', 'M', 'L', 'XL'];
@@ -15,7 +20,6 @@ class ProductDetailController extends GetxController {
     if (Get.arguments is ProductEntity) {
       product = Get.arguments as ProductEntity;
     } else {
-      // Fallback sample product
       product = const ProductEntity(
         id: 1,
         title: 'Fjallraven - Foldsack No. 1 Backpack',
@@ -28,20 +32,39 @@ class ProductDetailController extends GetxController {
         ratingCount: 120,
       );
     }
+
+    checkFavoriteStatus();
+  }
+
+  Future<void> checkFavoriteStatus() async {
+    final ids = await userStoreDataSource.getWishlistProductIds();
+    isFavorite.value = ids.contains(product.id);
   }
 
   void selectSize(String size) {
     selectedSize.value = size;
   }
 
-  void toggleFavorite() {
+  Future<void> toggleFavorite() async {
     isFavorite.value = !isFavorite.value;
+    await userStoreDataSource.toggleWishlistProduct(product);
+
+    if (Get.isRegistered<HomeController>()) {
+      Get.find<HomeController>().loadWishlist();
+    }
   }
 
-  void addToCart() {
+  Future<void> addToCart() async {
+    await userStoreDataSource.addToCart(product, selectedSize.value);
+
+    if (Get.isRegistered<HomeController>()) {
+      Get.find<HomeController>().loadCart();
+    }
+
     AppSnackbar.showSuccess(
       title: 'Added to Cart! 🛍️',
-      message: '${product.title} (Size ${selectedSize.value}) added to your cart.',
+      message:
+          '${product.title} (Size ${selectedSize.value}) has been saved to your cart.',
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:ecommerce/data/datasources/user_store_datasource.dart';
 import 'package:ecommerce/domain/usecases/get_current_user_usecase.dart';
 import 'package:ecommerce/domain/usecases/get_products_usecase.dart';
 import 'package:ecommerce/domain/usecases/get_categories_usecase.dart';
@@ -16,6 +17,7 @@ class HomeBinding extends Bindings {
         getProductsUseCase: Get.find<GetProductsUseCase>(),
         getCategoriesUseCase: Get.find<GetCategoriesUseCase>(),
         getProductsByCategoryUseCase: Get.find<GetProductsByCategoryUseCase>(),
+        userStoreDataSource: Get.find<UserStoreDataSource>(),
       ),
     );
   }

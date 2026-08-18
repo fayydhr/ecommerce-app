@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:ecommerce/app/routes/app_routes.dart';
 import 'package:ecommerce/core/usecases/usecase.dart';
 import 'package:ecommerce/core/widgets/app_snackbar.dart';
+import 'package:ecommerce/data/datasources/user_store_datasource.dart';
+import 'package:ecommerce/domain/entities/cart_item_entity.dart';
 import 'package:ecommerce/domain/entities/product_entity.dart';
 import 'package:ecommerce/domain/entities/user_entity.dart';
 import 'package:ecommerce/domain/usecases/get_categories_usecase.dart';
@@ -17,6 +19,7 @@ class HomeController extends GetxController {
   final GetProductsUseCase getProductsUseCase;
   final GetCategoriesUseCase getCategoriesUseCase;
   final GetProductsByCategoryUseCase getProductsByCategoryUseCase;
+  final UserStoreDataSource userStoreDataSource;
 
   HomeController({
     required this.getCurrentUserUseCase,
@@ -24,6 +27,7 @@ class HomeController extends GetxController {
     required this.getProductsUseCase,
     required this.getCategoriesUseCase,
     required this.getProductsByCategoryUseCase,
+    required this.userStoreDataSource,
   });
 
   final Rx<UserEntity?> currentUser = Rx<UserEntity?>(null);
@@ -35,11 +39,24 @@ class HomeController extends GetxController {
   final RxList<ProductEntity> displayProducts = <ProductEntity>[].obs;
 
   final RxSet<int> favoriteProductIds = <int>{}.obs;
+  final RxList<ProductEntity> wishlistProducts = <ProductEntity>[].obs;
 
+  final RxList<CartItemEntity> cartItems = <CartItemEntity>[].obs;
+
+  final RxInt currentNavIndex = 0.obs;
   final RxBool isLoading = false.obs;
   final RxBool isLoggingOut = false.obs;
 
   final TextEditingController searchController = TextEditingController();
+
+  void changeNavIndex(int index) {
+    currentNavIndex.value = index;
+    if (index == 2) {
+      loadWishlist();
+    } else if (index == 3) {
+      loadCart();
+    }
+  }
 
   @override
   void onInit() {
@@ -47,6 +64,8 @@ class HomeController extends GetxController {
     loadCurrentUser();
     loadCategories();
     loadProducts();
+    loadWishlist();
+    loadCart();
   }
 
   Future<void> loadCurrentUser() async {
@@ -61,7 +80,6 @@ class HomeController extends GetxController {
     final result = await getCategoriesUseCase(const NoParams());
     result.fold(
       (failure) {
-        // Default fallback categories
         categories.assignAll([
           'All',
           "men's clothing",
@@ -94,6 +112,19 @@ class HomeController extends GetxController {
         _applyFilters();
       },
     );
+  }
+
+  Future<void> loadWishlist() async {
+    final ids = await userStoreDataSource.getWishlistProductIds();
+    favoriteProductIds.assignAll(ids);
+
+    final savedList = await userStoreDataSource.getWishlistProducts();
+    wishlistProducts.assignAll(savedList);
+  }
+
+  Future<void> loadCart() async {
+    final items = await userStoreDataSource.getCartItems();
+    cartItems.assignAll(items);
   }
 
   Future<void> selectCategory(String category) async {
@@ -143,15 +174,47 @@ class HomeController extends GetxController {
     displayProducts.assignAll(list);
   }
 
-  void toggleFavorite(int productId) {
-    if (favoriteProductIds.contains(productId)) {
-      favoriteProductIds.remove(productId);
+  // ==================== WISHLIST / SAVED ACTIONS ====================
+
+  Future<void> toggleFavorite(ProductEntity product) async {
+    if (favoriteProductIds.contains(product.id)) {
+      favoriteProductIds.remove(product.id);
+      wishlistProducts.removeWhere((p) => p.id == product.id);
     } else {
-      favoriteProductIds.add(productId);
+      favoriteProductIds.add(product.id);
+      wishlistProducts.add(product);
     }
+
+    await userStoreDataSource.toggleWishlistProduct(product);
   }
 
   bool isFavorite(int productId) => favoriteProductIds.contains(productId);
+
+  // ==================== CART ACTIONS ====================
+
+  Future<void> addToCart(ProductEntity product, String size) async {
+    await userStoreDataSource.addToCart(product, size);
+    await loadCart();
+  }
+
+  Future<void> updateCartQuantity(String cartItemId, int delta) async {
+    await userStoreDataSource.updateCartQuantity(cartItemId, delta);
+    await loadCart();
+  }
+
+  Future<void> removeFromCart(String cartItemId) async {
+    await userStoreDataSource.removeFromCart(cartItemId);
+    await loadCart();
+  }
+
+  double get cartTotalPrice {
+    return cartItems.fold(
+      0.0,
+      (sum, item) => sum + (item.price * item.quantity),
+    );
+  }
+
+  // ==================== AUTH ====================
 
   Future<void> logout() async {
     isLoggingOut.value = true;

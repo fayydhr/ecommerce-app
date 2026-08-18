@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-import 'package:ecommerce/core/usecases/usecase.dart';
 import 'package:ecommerce/domain/usecases/check_auth_status_usecase.dart';
 import 'package:ecommerce/domain/usecases/get_current_user_usecase.dart';
 import 'package:ecommerce/app/routes/app_routes.dart';
@@ -20,30 +19,10 @@ class SplashController extends GetxController {
   }
 
   Future<void> _startAppRouting() async {
-    // Delay 3 detik sebelum masuk ke onboarding / screen berikutnya
+    // Delay 3 detik sebelum masuk ke onboarding
     await Future.delayed(const Duration(seconds: 3));
 
-    final isFirstTimeResult = await checkFirstTimeUseCase(const NoParams());
-    final isFirstTime = isFirstTimeResult.fold(
-      (failure) => true,
-      (value) => value,
-    );
-
-    if (isFirstTime) {
-      Get.offAllNamed(Routes.onboarding);
-      return;
-    }
-
-    final userResult = await getCurrentUserUseCase(const NoParams());
-    userResult.fold(
-      (failure) => Get.offAllNamed(Routes.login),
-      (user) {
-        if (user != null) {
-          Get.offAllNamed(Routes.home);
-        } else {
-          Get.offAllNamed(Routes.login);
-        }
-      },
-    );
+    // Selalu arahkan ke Onboarding untuk keperluan testing/desain
+    Get.offAllNamed(Routes.onboarding);
   }
 }

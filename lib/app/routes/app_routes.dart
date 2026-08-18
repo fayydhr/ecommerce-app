@@ -8,4 +8,5 @@ abstract class Routes {
   static const resetPassword = '/reset-password';
   static const home = '/home';
   static const productDetail = '/product-detail';
+  static const notifications = '/notifications';
 }

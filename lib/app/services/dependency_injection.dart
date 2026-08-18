@@ -26,6 +26,9 @@ import 'package:ecommerce/domain/usecases/get_categories_usecase.dart';
 import 'package:ecommerce/domain/usecases/get_products_by_category_usecase.dart';
 import 'package:ecommerce/firebase_options.dart';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ecommerce/data/datasources/user_store_datasource.dart';
+
 class DependencyInjection {
   static Future<void> init() async {
     // 1. Initialize SharedPreferences & HTTP Client
@@ -49,9 +52,18 @@ class DependencyInjection {
 
     // 3. Register External Services
     Get.lazyPut<FirebaseAuth>(() => FirebaseAuth.instance, fenix: true);
+    Get.lazyPut<FirebaseFirestore>(() => FirebaseFirestore.instance, fenix: true);
     Get.lazyPut<GoogleSignIn>(() => GoogleSignIn(), fenix: true);
 
     // 4. Register DataSources
+    Get.lazyPut<UserStoreDataSource>(
+      () => UserStoreDataSourceImpl(
+        firestore: Get.find<FirebaseFirestore>(),
+        auth: Get.find<FirebaseAuth>(),
+        sharedPreferences: Get.find<SharedPreferences>(),
+      ),
+      fenix: true,
+    );
     Get.lazyPut<AuthLocalDataSource>(
       () => AuthLocalDataSourceImpl(
         sharedPreferences: Get.find<SharedPreferences>(),
