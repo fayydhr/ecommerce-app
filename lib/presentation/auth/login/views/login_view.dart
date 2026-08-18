@@ -1,202 +1,366 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:ecommerce/app/config/app_colors.dart';
-import 'package:ecommerce/app/config/app_text_styles.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:ecommerce/app/utils/validators.dart';
-import 'package:ecommerce/core/widgets/custom_button.dart';
-import 'package:ecommerce/core/widgets/custom_text_field.dart';
-import 'package:ecommerce/core/widgets/social_auth_button.dart';
 import 'package:ecommerce/presentation/auth/login/controllers/login_controller.dart';
 
-class LoginView extends GetView<LoginController> {
+class LoginView extends StatefulWidget {
   const LoginView({super.key});
+
+  @override
+  State<LoginView> createState() => _LoginViewState();
+}
+
+class _LoginViewState extends State<LoginView> {
+  final LoginController controller = Get.find<LoginController>();
+  bool _obscurePassword = true;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Colors.white,
       body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-            child: Form(
-              key: controller.formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Logo / Header Icon
-                  Center(
-                    child: Container(
-                      width: 72,
-                      height: 72,
-                      decoration: BoxDecoration(
-                        gradient: AppColors.primaryGradient,
-                        borderRadius: BorderRadius.circular(22),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.primary.withValues(alpha: 0.35),
-                            blurRadius: 20,
-                            offset: const Offset(0, 10),
-                          ),
-                        ],
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Form(
+            key: controller.formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 24),
+
+                // 1. Title Header
+                Text(
+                  'Login to your account',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 32,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: -1.5,
+                    color: const Color(0xFF1A1A1A),
+                  ),
+                ),
+                const SizedBox(height: 6),
+
+                // 2. Subtitle
+                Text(
+                  'It’s great to see you again.',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    height: 1.4,
+                    color: const Color(0xFF808080),
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // 3. Email Input
+                Text(
+                  'Email',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: const Color(0xFF1A1A1A),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                TextFormField(
+                  controller: controller.emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  validator: AppValidators.validateEmail,
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 15,
+                    color: const Color(0xFF1A1A1A),
+                  ),
+                  decoration: InputDecoration(
+                    hintText: 'Enter your email address',
+                    hintStyle: GoogleFonts.plusJakartaSans(
+                      fontSize: 14,
+                      color: const Color(0xFF808080),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 16,
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: const BorderSide(color: Color(0xFFE6E6E6)),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: const BorderSide(color: Color(0xFFE6E6E6)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: const BorderSide(
+                        color: Color(0xFF1A1A1A),
+                        width: 1.5,
                       ),
-                      child: const Icon(
-                        Icons.shopping_bag_rounded,
-                        size: 38,
-                        color: Colors.white,
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: const BorderSide(color: Color(0xFFEF4444)),
+                    ),
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: const BorderSide(
+                        color: Color(0xFFEF4444),
+                        width: 1.5,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 32),
+                ),
+                const SizedBox(height: 18),
 
-                  // Title & Subtitle
-                  Text(
-                    'Selamat Datang Kembali! 👋',
-                    style: AppTextStyles.h1.copyWith(fontSize: 26),
+                // 4. Password Input
+                Text(
+                  'Password',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: const Color(0xFF1A1A1A),
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Masuk ke akunmu untuk melanjutkan belanja dan nikmati promo terbaik.',
-                    style: AppTextStyles.subtitle,
+                ),
+                const SizedBox(height: 8),
+                TextFormField(
+                  controller: controller.passwordController,
+                  obscureText: _obscurePassword,
+                  validator: AppValidators.validatePassword,
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 15,
+                    color: const Color(0xFF1A1A1A),
                   ),
-                  const SizedBox(height: 32),
-
-                  // Email Field
-                  CustomTextField(
-                    label: 'Alamat Email',
-                    hintText: 'nama@example.com',
-                    controller: controller.emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    prefixIcon: const Icon(
-                      Icons.email_outlined,
-                      color: AppColors.textSecondary,
+                  decoration: InputDecoration(
+                    hintText: 'Enter your password',
+                    hintStyle: GoogleFonts.plusJakartaSans(
+                      fontSize: 14,
+                      color: const Color(0xFF808080),
                     ),
-                    validator: AppValidators.validateEmail,
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Password Field
-                  CustomTextField(
-                    label: 'Kata Sandi',
-                    hintText: 'Minimal 6 karakter',
-                    controller: controller.passwordController,
-                    isPassword: true,
-                    prefixIcon: const Icon(
-                      Icons.lock_outline_rounded,
-                      color: AppColors.textSecondary,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 16,
                     ),
-                    validator: AppValidators.validatePassword,
+                    filled: true,
+                    fillColor: Colors.white,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscurePassword
+                            ? Icons.visibility_off_outlined
+                            : Icons.visibility_outlined,
+                        color: const Color(0xFF808080),
+                        size: 20,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _obscurePassword = !_obscurePassword;
+                        });
+                      },
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: const BorderSide(color: Color(0xFFE6E6E6)),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: const BorderSide(color: Color(0xFFE6E6E6)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: const BorderSide(
+                        color: Color(0xFF1A1A1A),
+                        width: 1.5,
+                      ),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: const BorderSide(color: Color(0xFFEF4444)),
+                    ),
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: const BorderSide(
+                        color: Color(0xFFEF4444),
+                        width: 1.5,
+                      ),
+                    ),
                   ),
-                  const SizedBox(height: 12),
+                ),
+                const SizedBox(height: 16),
 
-                  // Remember Me & Forgot Password Row
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Obx(
-                            () => SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: Checkbox(
-                                value: controller.rememberMe.value,
-                                onChanged: (val) =>
-                                    controller.rememberMe.value = val ?? false,
-                                activeColor: AppColors.primary,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
+                // 5. Forgot Password Text Link
+                Row(
+                  children: [
+                    Text(
+                      'Forgot your password? ',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        color: const Color(0xFF808080),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: controller.goToForgotPassword,
+                      child: Text(
+                        'Reset your password',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFF1A1A1A),
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+
+                // 6. Button Login
+                SizedBox(
+                  width: double.infinity,
+                  height: 54,
+                  child: Obx(
+                    () => ElevatedButton(
+                      onPressed: controller.isLoadingEmail.value
+                          ? null
+                          : controller.loginWithEmail,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF1A1A1A),
+                        disabledBackgroundColor: const Color(0xFF808080),
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      child: controller.isLoadingEmail.value
+                          ? const SizedBox(
+                              width: 22,
+                              height: 22,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.5,
+                                color: Colors.white,
+                              ),
+                            )
+                          : Text(
+                              'Login',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.white,
                               ),
                             ),
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            'Ingat saya',
-                            style: AppTextStyles.bodySmall.copyWith(
-                              color: AppColors.textPrimary,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // 7. Divider "----- or -----"
+                Row(
+                  children: [
+                    const Expanded(
+                      child: Divider(color: Color(0xFFE6E6E6), thickness: 1),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 14),
+                      child: Text(
+                        'or',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          color: const Color(0xFF808080),
+                        ),
+                      ),
+                    ),
+                    const Expanded(
+                      child: Divider(color: Color(0xFFE6E6E6), thickness: 1),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+
+                // 8. Login with Google Button
+                SizedBox(
+                  width: double.infinity,
+                  height: 54,
+                  child: Obx(
+                    () => OutlinedButton(
+                      onPressed: controller.isLoadingGoogle.value
+                          ? null
+                          : controller.loginWithGoogle,
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(
+                          color: Color(0xFFE6E6E6),
+                          width: 1.5,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        backgroundColor: Colors.white,
+                        elevation: 0,
+                      ),
+                      child: controller.isLoadingGoogle.value
+                          ? const SizedBox(
+                              width: 22,
+                              height: 22,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.5,
+                                color: Color(0xFF1A1A1A),
+                              ),
+                            )
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SvgPicture.asset(
+                                  'assets/icons/google.svg',
+                                  width: 22,
+                                  height: 22,
+                                ),
+                                const SizedBox(width: 10),
+                                Text(
+                                  'Login with Google',
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                    color: const Color(0xFF1A1A1A),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
-                      ),
-                      GestureDetector(
-                        onTap: controller.goToForgotPassword,
-                        child: Text(
-                          'Lupa Kata Sandi?',
-                          style: AppTextStyles.bodySmall.copyWith(
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 28),
-
-                  // Login Button
-                  Obx(
-                    () => CustomButton(
-                      text: 'Masuk',
-                      isLoading: controller.isLoadingEmail.value,
-                      onPressed: controller.loginWithEmail,
                     ),
                   ),
-                  const SizedBox(height: 24),
+                ),
+                const SizedBox(height: 120),
 
-                  // Divider "Atau masuk dengan"
-                  Row(
-                    children: [
-                      const Expanded(
-                        child: Divider(color: AppColors.border, thickness: 1.2),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Text(
-                          'atau masuk dengan',
-                          style: AppTextStyles.bodySmall,
-                        ),
-                      ),
-                      const Expanded(
-                        child: Divider(color: AppColors.border, thickness: 1.2),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Google Sign-In Button
-                  Obx(
-                    () => SocialAuthButton(
-                      text: 'Masuk dengan Google',
-                      isLoading: controller.isLoadingGoogle.value,
-                      onPressed: controller.loginWithGoogle,
-                    ),
-                  ),
-                  const SizedBox(height: 36),
-
-                  // Register Footer Link
-                  Row(
+                // 9. Footer: Don't have an account? Join
+                Center(
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'Belum punya akun? ',
-                        style: AppTextStyles.bodyMedium.copyWith(
-                          color: AppColors.textSecondary,
+                        'Don’t have an account? ',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          color: const Color(0xFF808080),
                         ),
                       ),
                       GestureDetector(
                         onTap: controller.goToRegister,
                         child: Text(
-                          'Daftar Sekarang',
-                          style: AppTextStyles.bodyMedium.copyWith(
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.w700,
+                          'Join',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFF1A1A1A),
+                            decoration: TextDecoration.underline,
                           ),
                         ),
                       ),
                     ],
                   ),
-                ],
-              ),
+                ),
+                const SizedBox(height: 24),
+              ],
             ),
           ),
         ),

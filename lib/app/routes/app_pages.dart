@@ -2,6 +2,8 @@ import 'package:get/get.dart';
 import 'package:ecommerce/app/routes/app_routes.dart';
 import 'package:ecommerce/presentation/auth/forgot_password/bindings/forgot_password_binding.dart';
 import 'package:ecommerce/presentation/auth/forgot_password/views/forgot_password_view.dart';
+import 'package:ecommerce/presentation/auth/forgot_password/views/otp_verification_view.dart';
+import 'package:ecommerce/presentation/auth/forgot_password/views/reset_password_view.dart';
 import 'package:ecommerce/presentation/auth/login/bindings/login_binding.dart';
 import 'package:ecommerce/presentation/auth/login/views/login_view.dart';
 import 'package:ecommerce/presentation/auth/register/bindings/register_binding.dart';
@@ -44,6 +46,18 @@ class AppPages {
     GetPage(
       name: Routes.forgotPassword,
       page: () => const ForgotPasswordView(),
+      binding: ForgotPasswordBinding(),
+      transition: Transition.rightToLeftWithFade,
+    ),
+    GetPage(
+      name: Routes.otpVerification,
+      page: () => const OtpVerificationView(),
+      binding: ForgotPasswordBinding(),
+      transition: Transition.rightToLeftWithFade,
+    ),
+    GetPage(
+      name: Routes.resetPassword,
+      page: () => const ResetPasswordView(),
       binding: ForgotPasswordBinding(),
       transition: Transition.rightToLeftWithFade,
     ),
