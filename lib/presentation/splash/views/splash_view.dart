@@ -19,55 +19,37 @@ class SplashView extends GetView<SplashController> {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            // Background Vector Layers
+            // Background Vector Layer (Digeser agak naik)
             Positioned.fill(
-              child: SvgPicture.asset(
-                'assets/icons/vector.svg',
-                fit: BoxFit.cover,
-              ),
-            ),
-            Positioned.fill(
-              child: SvgPicture.asset(
-                'assets/icons/vector2.svg',
-                fit: BoxFit.cover,
-              ),
-            ),
-            Positioned.fill(
-              child: SvgPicture.asset(
-                'assets/icons/vector3.svg',
-                fit: BoxFit.cover,
-              ),
-            ),
-            Positioned.fill(
-              child: SvgPicture.asset(
-                'assets/icons/vector4.svg',
-                fit: BoxFit.cover,
-              ),
-            ),
-
-            // Center Content: Icon & Loading Spinner
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Center Icon SVG
-                SvgPicture.asset(
-                  'assets/icons/icon.svg',
-                  width: 100,
-                  height: 100,
+              child: Transform.translate(
+                offset: const Offset(0, -70),
+                child: SvgPicture.asset(
+                  'assets/icons/vector.svg',
+                  fit: BoxFit.cover,
                 ),
+              ),
+            ),
 
-                const SizedBox(height: 200),
+            // Exact Center Icon SVG
+            Center(
+              child: SvgPicture.asset(
+                'assets/icons/icon.svg',
+                width: 120,
+                height: 120,
+              ),
+            ),
 
-                // Animated Circular Loading Spinner
-                const SizedBox(
-                  width: 32,
-                  height: 32,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 3,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                  ),
+            // Loading Spinner di bagian bawah
+            const Positioned(
+              bottom: 64,
+              child: SizedBox(
+                width: 32,
+                height: 32,
+                child: CircularProgressIndicator(
+                  strokeWidth: 3,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                 ),
-              ],
+              ),
             ),
           ],
         ),
