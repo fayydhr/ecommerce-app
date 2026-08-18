@@ -20,8 +20,8 @@ class SplashController extends GetxController {
   }
 
   Future<void> _startAppRouting() async {
-    // Delay for smooth splash animation
-    await Future.delayed(const Duration(milliseconds: 2500));
+    // Delay 3 detik sebelum masuk ke onboarding / screen berikutnya
+    await Future.delayed(const Duration(milliseconds: 3000));
 
     final isFirstTimeResult = await checkFirstTimeUseCase(const NoParams());
     final isFirstTime = isFirstTimeResult.fold(
