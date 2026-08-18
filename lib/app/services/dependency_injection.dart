@@ -17,13 +17,21 @@ import 'package:ecommerce/domain/usecases/logout_usecase.dart';
 import 'package:ecommerce/domain/usecases/register_with_email_usecase.dart';
 import 'package:ecommerce/domain/usecases/send_password_reset_usecase.dart';
 
+import 'package:http/http.dart' as http;
+import 'package:ecommerce/data/datasources/product_remote_datasource.dart';
+import 'package:ecommerce/data/repositories/product_repository_impl.dart';
+import 'package:ecommerce/domain/repositories/product_repository.dart';
+import 'package:ecommerce/domain/usecases/get_products_usecase.dart';
+import 'package:ecommerce/domain/usecases/get_categories_usecase.dart';
+import 'package:ecommerce/domain/usecases/get_products_by_category_usecase.dart';
 import 'package:ecommerce/firebase_options.dart';
 
 class DependencyInjection {
   static Future<void> init() async {
-    // 1. Initialize SharedPreferences
+    // 1. Initialize SharedPreferences & HTTP Client
     final sharedPreferences = await SharedPreferences.getInstance();
     Get.put<SharedPreferences>(sharedPreferences, permanent: true);
+    Get.lazyPut<http.Client>(() => http.Client(), fenix: true);
 
     // 2. Initialize Firebase
     try {
@@ -101,5 +109,20 @@ class DependencyInjection {
       () => SetFirstTimeCompleteUseCase(Get.find<AuthRepository>()),
       fenix: true,
     );
+
+    // 7. Register Product Dependencies
+    Get.lazyPut<ProductRemoteDataSource>(
+      () => ProductRemoteDataSourceImpl(client: Get.find<http.Client>()),
+      fenix: true,
+    );
+    Get.lazyPut<ProductRepository>(
+      () => ProductRepositoryImpl(
+        remoteDataSource: Get.find<ProductRemoteDataSource>(),
+      ),
+      fenix: true,
+    );
+    Get.lazyPut(() => GetProductsUseCase(Get.find<ProductRepository>()), fenix: true);
+    Get.lazyPut(() => GetCategoriesUseCase(Get.find<ProductRepository>()), fenix: true);
+    Get.lazyPut(() => GetProductsByCategoryUseCase(Get.find<ProductRepository>()), fenix: true);
   }
 }
