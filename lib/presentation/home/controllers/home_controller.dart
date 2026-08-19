@@ -47,6 +47,16 @@ class HomeController extends GetxController {
   final RxBool isLoading = false.obs;
   final RxBool isLoggingOut = false.obs;
 
+  // Filter States
+  final RxString selectedSort = 'Relevance'.obs;
+  final Rx<RangeValues> priceRange = const RangeValues(0, 1000).obs;
+  final RxString selectedSize = 'S'.obs;
+
+  // Temp Filter States for bottomsheet
+  final RxString tempSort = 'Relevance'.obs;
+  final Rx<RangeValues> tempPriceRange = const RangeValues(0, 1000).obs;
+  final RxString tempSize = 'S'.obs;
+
   final TextEditingController searchController = TextEditingController();
 
   void changeNavIndex(int index) {
@@ -152,6 +162,19 @@ class HomeController extends GetxController {
     _applyFilters();
   }
 
+  void initFilterModal() {
+    tempSort.value = selectedSort.value;
+    tempPriceRange.value = priceRange.value;
+    tempSize.value = selectedSize.value;
+  }
+
+  void applyFilterModal() {
+    selectedSort.value = tempSort.value;
+    priceRange.value = tempPriceRange.value;
+    selectedSize.value = tempSize.value;
+    _applyFilters();
+  }
+
   void _applyFilters() {
     final query = searchController.text.trim().toLowerCase();
     var list = allProducts.toList();
@@ -169,6 +192,20 @@ class HomeController extends GetxController {
               p.title.toLowerCase().contains(query) ||
               p.description.toLowerCase().contains(query))
           .toList();
+    }
+
+    // Price range filter
+    list = list
+        .where((p) =>
+            p.price >= priceRange.value.start && p.price <= priceRange.value.end)
+        .toList();
+
+    // Sort
+    if (selectedSort.value == 'Price low to high' ||
+        selectedSort.value == 'Price low to heigh') {
+      list.sort((a, b) => a.price.compareTo(b.price));
+    } else if (selectedSort.value == 'Price high to low') {
+      list.sort((a, b) => b.price.compareTo(a.price));
     }
 
     displayProducts.assignAll(list);

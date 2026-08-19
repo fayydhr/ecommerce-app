@@ -31,7 +31,7 @@ class OnboardingView extends GetView<OnboardingController> {
               child: Text(
                 'Define\nyourself in\nyour unique\nway.',
                 style: GoogleFonts.plusJakartaSans(
-                  fontSize: 75,
+                  fontSize: 78,
                   fontWeight: FontWeight.w800,
                   height: 0.85,
                   letterSpacing: -4.0,

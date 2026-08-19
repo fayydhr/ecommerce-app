@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ecommerce/app/routes/app_routes.dart';
 import 'package:ecommerce/domain/entities/product_entity.dart';
 import 'package:ecommerce/presentation/home/controllers/home_controller.dart';
+import 'package:ecommerce/presentation/home/widgets/filter_bottom_sheet.dart';
 
 class HomeView extends GetView<HomeController> {
   const HomeView({super.key});
@@ -17,7 +18,7 @@ class HomeView extends GetView<HomeController> {
         child: Obx(() {
           switch (controller.currentNavIndex.value) {
             case 0:
-              return _buildHomeTab();
+              return _buildHomeTab(context);
             case 1:
               return _buildSearchTab();
             case 2:
@@ -27,7 +28,7 @@ class HomeView extends GetView<HomeController> {
             case 4:
               return _buildAccountTab();
             default:
-              return _buildHomeTab();
+              return _buildHomeTab(context);
           }
         }),
       ),
@@ -115,7 +116,7 @@ class HomeView extends GetView<HomeController> {
   }
 
   // ==================== TAB 0: HOME / DISCOVER ====================
-  Widget _buildHomeTab() {
+  Widget _buildHomeTab(BuildContext context) {
     return RefreshIndicator(
       onRefresh: () async {
         await controller.loadCategories();
@@ -224,7 +225,7 @@ class HomeView extends GetView<HomeController> {
                         height: 22,
                       ),
                       onPressed: () {
-                        // Filter bottomsheet / dialog
+                        FilterBottomSheet.show(context, controller);
                       },
                     ),
                   ),
