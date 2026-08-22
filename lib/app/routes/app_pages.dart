@@ -8,6 +8,8 @@ import 'package:ecommerce/presentation/auth/login/bindings/login_binding.dart';
 import 'package:ecommerce/presentation/auth/login/views/login_view.dart';
 import 'package:ecommerce/presentation/auth/register/bindings/register_binding.dart';
 import 'package:ecommerce/presentation/auth/register/views/register_view.dart';
+import 'package:ecommerce/presentation/checkout/bindings/checkout_binding.dart';
+import 'package:ecommerce/presentation/checkout/views/checkout_view.dart';
 import 'package:ecommerce/presentation/home/bindings/home_binding.dart';
 import 'package:ecommerce/presentation/home/views/home_view.dart';
 import 'package:ecommerce/presentation/notifications/bindings/notifications_binding.dart';
@@ -81,6 +83,12 @@ class AppPages {
       name: Routes.notifications,
       page: () => const NotificationsView(),
       binding: NotificationsBinding(),
+      transition: Transition.rightToLeftWithFade,
+    ),
+    GetPage(
+      name: Routes.checkout,
+      page: () => const CheckoutView(),
+      binding: CheckoutBinding(),
       transition: Transition.rightToLeftWithFade,
     ),
   ];

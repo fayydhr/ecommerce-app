@@ -480,23 +480,58 @@ class HomeView extends GetView<HomeController> {
     );
   }
 
+  // ==================== TAB HEADER ====================
+  Widget _buildTabHeader(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 8, bottom: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          IconButton(
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+            icon: const Icon(
+              Icons.arrow_back_ios_new_rounded,
+              size: 20,
+              color: Color(0xFF1A1A1A),
+            ),
+            onPressed: () => controller.changeNavIndex(0),
+          ),
+          Expanded(
+            child: Text(
+              title,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 24,
+                fontWeight: FontWeight.w800,
+                letterSpacing: -1.0,
+                color: const Color(0xFF1A1A1A),
+              ),
+            ),
+          ),
+          IconButton(
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+            icon: SvgPicture.asset(
+              'assets/icons/notif.svg',
+              width: 26,
+              height: 26,
+            ),
+            onPressed: () => Get.toNamed(Routes.notifications),
+          ),
+        ],
+      ),
+    );
+  }
+
   // ==================== TAB 1: SEARCH ====================
   Widget _buildSearchTab() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Search',
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 32,
-              fontWeight: FontWeight.w800,
-              letterSpacing: -1.5,
-              color: const Color(0xFF1A1A1A),
-            ),
-          ),
-          const SizedBox(height: 16),
+          _buildTabHeader('Search'),
           Container(
             height: 52,
             decoration: BoxDecoration(
@@ -590,20 +625,11 @@ class HomeView extends GetView<HomeController> {
   // ==================== TAB 2: SAVED / WISHLIST ====================
   Widget _buildSavedTab() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Saved Items',
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 32,
-              fontWeight: FontWeight.w800,
-              letterSpacing: -1.5,
-              color: const Color(0xFF1A1A1A),
-            ),
-          ),
-          const SizedBox(height: 16),
+          _buildTabHeader('Saved Items'),
           Expanded(
             child: Obx(() {
               if (controller.wishlistProducts.isEmpty) {
@@ -711,25 +737,16 @@ class HomeView extends GetView<HomeController> {
 
   // ==================== TAB 3: CART ====================
   Widget _buildCartTab() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'My Cart',
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 32,
-              fontWeight: FontWeight.w800,
-              letterSpacing: -1.5,
-              color: const Color(0xFF1A1A1A),
-            ),
-          ),
-          const SizedBox(height: 16),
-          Expanded(
-            child: Obx(() {
-              if (controller.cartItems.isEmpty) {
-                return Center(
+    return Obx(() {
+      if (controller.cartItems.isEmpty) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildTabHeader('My Cart'),
+              Expanded(
+                child: Center(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 32),
                     child: Column(
@@ -765,176 +782,341 @@ class HomeView extends GetView<HomeController> {
                       ],
                     ),
                   ),
-                );
-              }
-
-              return ListView.separated(
-                itemCount: controller.cartItems.length,
-                separatorBuilder: (context, index) => const Divider(
-                  color: Color(0xFFE6E6E6),
-                  height: 24,
                 ),
+              ),
+            ],
+          ),
+        );
+      }
+
+      final subtotal = controller.cartTotalPrice;
+      final vat = subtotal > 0 ? 0.00 : 0.00;
+      final shippingFee = subtotal > 0 ? 0.00 : 0.00;
+      final total = subtotal + vat + shippingFee;
+
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildTabHeader('My Cart'),
+            const SizedBox(height: 8),
+            Expanded(
+              child: ListView.separated(
+                itemCount: controller.cartItems.length,
+                separatorBuilder: (context, index) => const SizedBox(height: 14),
                 itemBuilder: (context, index) {
                   final item = controller.cartItems[index];
-                  return Row(
-                    children: [
-                      // Product Image
-                      Container(
-                        width: 64,
-                        height: 64,
-                        padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF6F6F6),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Image.network(
-                          item.image,
-                          fit: BoxFit.contain,
-                        ),
+                  return Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: const Color(0xFFE6E6E6),
+                        width: 1,
                       ),
-                      const SizedBox(width: 14),
-
-                      // Info Column
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              item.title,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.plusJakartaSans(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 14,
-                                color: const Color(0xFF1A1A1A),
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Size: ${item.size}  •  \$${item.price.toStringAsFixed(2)}',
-                              style: GoogleFonts.plusJakartaSans(
-                                color: const Color(0xFF808080),
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      // Quantity Selector (- Qty +)
-                      Container(
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF7F7F7),
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: const Color(0xFFE6E6E6)),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            InkWell(
-                              onTap: () =>
-                                  controller.updateCartQuantity(item.id, -1),
-                              child: const Padding(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 4,
-                                ),
-                                child: Icon(Icons.remove, size: 16),
-                              ),
-                            ),
-                            Text(
-                              '${item.quantity}',
-                              style: GoogleFonts.plusJakartaSans(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 13,
-                              ),
-                            ),
-                            InkWell(
-                              onTap: () =>
-                                  controller.updateCartQuantity(item.id, 1),
-                              child: const Padding(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 4,
-                                ),
-                                child: Icon(Icons.add, size: 16),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              );
-            }),
-          ),
-
-          // Total Price & Checkout Bar
-          Obx(() {
-            if (controller.cartItems.isEmpty) return const SizedBox.shrink();
-
-            return Column(
-              children: [
-                const Divider(color: Color(0xFFE6E6E6), thickness: 1),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Total Price',
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 14,
-                              color: const Color(0xFF808080),
-                            ),
-                          ),
-                          Text(
-                            '\$${controller.cartTotalPrice.toStringAsFixed(2)}',
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w700,
-                              color: const Color(0xFF1A1A1A),
-                            ),
-                          ),
-                        ],
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          // Checkout action
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF1A1A1A),
-                          elevation: 0,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 28,
-                            vertical: 14,
-                          ),
-                          shape: RoundedRectangleBorder(
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // Product Image
+                        Container(
+                          width: 68,
+                          height: 68,
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF6F6F6),
                             borderRadius: BorderRadius.circular(10),
                           ),
-                        ),
-                        child: Text(
-                          'Checkout',
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
+                          child: Image.network(
+                            item.image,
+                            fit: BoxFit.contain,
+                            errorBuilder: (context, error, stackTrace) =>
+                                const Icon(
+                              Icons.broken_image_rounded,
+                              color: Color(0xFF808080),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                        const SizedBox(width: 14),
+
+                        // Info Column: Title, Size, Price
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                item.title,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                  color: const Color(0xFF1A1A1A),
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                'Size: ${item.size}',
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 12,
+                                  color: const Color(0xFF808080),
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                '\$${(item.price * item.quantity).toStringAsFixed(2)}',
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                  color: const Color(0xFF1A1A1A),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+
+                        // Trash Icon & Quantity Counter
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            GestureDetector(
+                              onTap: () => controller.removeFromCart(item.id),
+                              behavior: HitTestBehavior.opaque,
+                              child: const Padding(
+                                padding: EdgeInsets.all(4.0),
+                                child: Icon(
+                                  Icons.delete_outline_rounded,
+                                  color: Color(0xFFEF4444),
+                                  size: 20,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Container(
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFF7F7F7),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: const Color(0xFFE6E6E6),
+                                  width: 1,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  InkWell(
+                                    onTap: () => controller.updateCartQuantity(
+                                      item.id,
+                                      -1,
+                                    ),
+                                    borderRadius: const BorderRadius.horizontal(
+                                      left: Radius.circular(8),
+                                    ),
+                                    child: const Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 6,
+                                        vertical: 4,
+                                      ),
+                                      child: Icon(
+                                        Icons.remove,
+                                        size: 14,
+                                        color: Color(0xFF1A1A1A),
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.symmetric(horizontal: 4),
+                                    child: Text(
+                                      '${item.quantity}',
+                                      style: GoogleFonts.plusJakartaSans(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 13,
+                                        color: const Color(0xFF1A1A1A),
+                                      ),
+                                    ),
+                                  ),
+                                  InkWell(
+                                    onTap: () => controller.updateCartQuantity(
+                                      item.id,
+                                      1,
+                                    ),
+                                    borderRadius: const BorderRadius.horizontal(
+                                      right: Radius.circular(8),
+                                    ),
+                                    child: const Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 6,
+                                        vertical: 4,
+                                      ),
+                                      child: Icon(
+                                        Icons.add,
+                                        size: 14,
+                                        color: Color(0xFF1A1A1A),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Subtotal
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Subtotal',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    color: const Color(0xFF1A1A1A),
+                  ),
+                ),
+                Text(
+                  '\$${subtotal.toStringAsFixed(2)}',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: const Color(0xFF1A1A1A),
                   ),
                 ),
               ],
-            );
-          }),
-        ],
-      ),
-    );
+            ),
+            const SizedBox(height: 16),
+
+            // VAT (%)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'VAT (%)',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    color: const Color(0xFF1A1A1A),
+                  ),
+                ),
+                Text(
+                  '\$${vat.toStringAsFixed(2)}',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: const Color(0xFF1A1A1A),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+
+            // Shipping fee
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Shipping fee',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    color: const Color(0xFF1A1A1A),
+                  ),
+                ),
+                Text(
+                  '\$${shippingFee.toStringAsFixed(2)}',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: const Color(0xFF1A1A1A),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+
+            // Line weight 1 stroke E6E6E6
+            Container(
+              height: 1,
+              color: const Color(0xFFE6E6E6),
+            ),
+            const SizedBox(height: 16),
+
+            // Total
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Total',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    color: const Color(0xFF1A1A1A),
+                  ),
+                ),
+                Text(
+                  '\$${total.toStringAsFixed(2)}',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF1A1A1A),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 50),
+
+            // Button Go to Checkout
+            SizedBox(
+              width: double.infinity,
+              height: 54,
+              child: ElevatedButton(
+                onPressed: () => Get.toNamed(Routes.checkout),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF1A1A1A),
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Go to Checkout',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    const Icon(
+                      Icons.arrow_forward_rounded,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
+      );
+    });
   }
 
   // ==================== TAB 4: ACCOUNT ====================
