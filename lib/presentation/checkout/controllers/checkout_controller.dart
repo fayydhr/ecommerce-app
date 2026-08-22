@@ -5,6 +5,7 @@ import 'package:ecommerce/core/widgets/app_snackbar.dart';
 import 'package:ecommerce/data/datasources/user_store_datasource.dart';
 import 'package:ecommerce/domain/entities/address_entity.dart';
 import 'package:ecommerce/domain/entities/cart_item_entity.dart';
+import 'package:ecommerce/domain/entities/order_item_entity.dart';
 import 'package:ecommerce/presentation/home/controllers/home_controller.dart';
 
 class CheckoutController extends GetxController {
@@ -106,6 +107,23 @@ class CheckoutController extends GetxController {
 
   Future<void> placeOrder() async {
     isPlacingOrder.value = true;
+    final newOrders = cartItems.map((item) {
+      return OrderItemEntity(
+        id: 'ord_${DateTime.now().millisecondsSinceEpoch}_${item.id}',
+        title: item.title,
+        size: item.size,
+        price: item.price,
+        image: item.image,
+        status: 'In Transit',
+        isCompleted: false,
+        orderDate: DateTime.now(),
+      );
+    }).toList();
+
+    if (newOrders.isNotEmpty) {
+      await userStoreDataSource.addOrders(newOrders);
+    }
+
     await userStoreDataSource.clearCart();
     if (Get.isRegistered<HomeController>()) {
       await Get.find<HomeController>().loadCart();

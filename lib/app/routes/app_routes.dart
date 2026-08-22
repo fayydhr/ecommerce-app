@@ -11,4 +11,5 @@ abstract class Routes {
   static const notifications = '/notifications';
   static const checkout = '/checkout';
   static const address = '/address';
+  static const myOrders = '/my-orders';
 }

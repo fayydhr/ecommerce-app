@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
 import 'package:ecommerce/app/routes/app_routes.dart';
 import 'package:ecommerce/presentation/address/views/address_view.dart';
+import 'package:ecommerce/presentation/orders/bindings/orders_binding.dart';
+import 'package:ecommerce/presentation/orders/views/my_orders_view.dart';
 import 'package:ecommerce/presentation/auth/forgot_password/bindings/forgot_password_binding.dart';
 import 'package:ecommerce/presentation/auth/forgot_password/views/forgot_password_view.dart';
 import 'package:ecommerce/presentation/auth/forgot_password/views/otp_verification_view.dart';
@@ -95,6 +97,12 @@ class AppPages {
     GetPage(
       name: Routes.address,
       page: () => const AddressView(),
+      transition: Transition.rightToLeftWithFade,
+    ),
+    GetPage(
+      name: Routes.myOrders,
+      page: () => const MyOrdersView(),
+      binding: OrdersBinding(),
       transition: Transition.rightToLeftWithFade,
     ),
   ];

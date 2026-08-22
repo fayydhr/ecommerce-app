@@ -4,8 +4,11 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ecommerce/app/routes/app_routes.dart';
 import 'package:ecommerce/domain/entities/product_entity.dart';
+import 'package:ecommerce/presentation/address/views/address_view.dart';
 import 'package:ecommerce/presentation/home/controllers/home_controller.dart';
 import 'package:ecommerce/presentation/home/widgets/filter_bottom_sheet.dart';
+import 'package:ecommerce/presentation/orders/bindings/orders_binding.dart';
+import 'package:ecommerce/presentation/orders/views/my_orders_view.dart';
 
 class HomeView extends GetView<HomeController> {
   const HomeView({super.key});
@@ -1143,9 +1146,11 @@ class HomeView extends GetView<HomeController> {
           _buildAccountMenuItem(
             iconPath: 'assets/icons/box.svg',
             title: 'My Orders',
-            onTap: () {
-              // Action for My Orders
-            },
+            onTap: () => Get.to(
+              () => const MyOrdersView(),
+              binding: OrdersBinding(),
+              transition: Transition.rightToLeftWithFade,
+            ),
           ),
           const SizedBox(height: 25),
 
@@ -1169,7 +1174,10 @@ class HomeView extends GetView<HomeController> {
           _buildAccountMenuItem(
             iconPath: 'assets/icons/addresbook.svg',
             title: 'Address Book',
-            onTap: () => Get.toNamed(Routes.address),
+            onTap: () => Get.to(
+              () => const AddressView(),
+              transition: Transition.rightToLeftWithFade,
+            ),
           ),
           const SizedBox(height: 25),
           _buildAccountIndentedDivider(),

@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ecommerce/domain/entities/cart_item_entity.dart';
+import 'package:ecommerce/domain/entities/order_item_entity.dart';
 import 'package:ecommerce/domain/entities/product_entity.dart';
 
 abstract class UserStoreDataSource {
@@ -16,6 +17,9 @@ abstract class UserStoreDataSource {
   Future<void> updateCartQuantity(String cartItemId, int delta);
   Future<void> removeFromCart(String cartItemId);
   Future<void> clearCart();
+
+  Future<List<OrderItemEntity>> getOrders();
+  Future<void> addOrders(List<OrderItemEntity> newOrders);
 }
 
 class UserStoreDataSourceImpl implements UserStoreDataSource {
@@ -353,5 +357,56 @@ class UserStoreDataSourceImpl implements UserStoreDataSource {
   Future<void> _saveLocalCart(List<CartItemEntity> items) async {
     final encoded = json.encode(items.map((i) => i.toJson()).toList());
     await sharedPreferences.setString(_localCartKey, encoded);
+  }
+
+  static const String _localOrdersKey = 'local_orders_list';
+
+  @override
+  Future<List<OrderItemEntity>> getOrders() async {
+    final local = _getLocalOrders();
+    return local;
+  }
+
+  @override
+  Future<void> addOrders(List<OrderItemEntity> newOrders) async {
+    final list = _getLocalOrders();
+    list.insertAll(0, newOrders);
+    await _saveLocalOrders(list);
+
+    final uid = _currentUid;
+    if (uid != null) {
+      for (final o in newOrders) {
+        firestore
+            .collection('users')
+            .doc(uid)
+            .collection('orders')
+            .doc(o.id)
+            .set(o.toJson())
+            .catchError((e) {
+          if (kDebugMode) print('Firestore order add error: $e');
+        });
+      }
+    }
+  }
+
+  List<OrderItemEntity> _getLocalOrders() {
+    final raw = sharedPreferences.getString(_localOrdersKey);
+    if (raw == null || raw.isEmpty) {
+      return [];
+    }
+    try {
+      final List<dynamic> list = json.decode(raw);
+      return list
+          .map((item) => OrderItemEntity.fromJson(item))
+          .where((item) => item.id != 'ord_101' && item.id != 'ord_102' && item.id != 'ord_103')
+          .toList();
+    } catch (_) {
+      return [];
+    }
+  }
+
+  Future<void> _saveLocalOrders(List<OrderItemEntity> items) async {
+    final encoded = json.encode(items.map((i) => i.toJson()).toList());
+    await sharedPreferences.setString(_localOrdersKey, encoded);
   }
 }
