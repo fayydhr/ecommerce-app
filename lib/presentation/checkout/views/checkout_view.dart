@@ -42,9 +42,7 @@ class CheckoutView extends GetView<CheckoutController> {
                           ),
                         ),
                         GestureDetector(
-                          onTap: () {
-                            // Action to change address
-                          },
+                          onTap: () => Get.toNamed(Routes.address),
                           child: Text(
                             'Change',
                             style: GoogleFonts.plusJakartaSans(
@@ -59,45 +57,56 @@ class CheckoutView extends GetView<CheckoutController> {
                     ),
                     const SizedBox(height: 16),
 
-                    // Address Card / Row
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.only(top: 2.0),
-                          child: Icon(
-                            Icons.location_on_rounded,
-                            color: Color(0xFF999999),
-                            size: 24,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Home',
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: const Color(0xFF1A1A1A),
-                                ),
+                    // Address Card / Row (Entire area clickable)
+                    GestureDetector(
+                      onTap: () => Get.toNamed(Routes.address),
+                      behavior: HitTestBehavior.opaque,
+                      child: Obx(
+                        () => Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.only(top: 2.0),
+                              child: Icon(
+                                Icons.location_on_rounded,
+                                color: Color(0xFF999999),
+                                size: 24,
                               ),
-                              const SizedBox(height: 4),
-                              Text(
-                                '925 S Chugach St #APT 10, Alaska 99645',
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                  color: const Color(0xFF808080),
-                                  height: 1.3,
-                                ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    controller.selectedAddress.value.title,
+                                    style: GoogleFonts.plusJakartaSans(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: const Color(0xFF1A1A1A),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    controller.selectedAddress.value.fullAddress,
+                                    style: GoogleFonts.plusJakartaSans(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                      color: const Color(0xFF808080),
+                                      height: 1.3,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+                            const Icon(
+                              Icons.arrow_forward_ios_rounded,
+                              size: 14,
+                              color: Color(0xFF999999),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                     const SizedBox(height: 20),
 
@@ -351,35 +360,41 @@ class CheckoutView extends GetView<CheckoutController> {
                     // Promo Code Section (Input box + separate Add button)
                     Row(
                       children: [
-                        // Promo Code Input Box (h: 52, stroke 000000 weight 1, radius 10)
+                        // Promo Code TextField (h: 52, stroke 000000 weight 1 from textfield border, radius 10)
                         Expanded(
-                          child: Container(
+                          child: SizedBox(
                             height: 52,
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                color: const Color(0xFF000000),
-                                width: 1,
+                            child: TextField(
+                              controller: controller.promoController,
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 14,
+                                color: const Color(0xFF1A1A1A),
                               ),
-                            ),
-                            child: Center(
-                              child: TextField(
-                                controller: controller.promoController,
-                                style: GoogleFonts.plusJakartaSans(
+                              decoration: InputDecoration(
+                                hintText: 'Enter promo code',
+                                hintStyle: GoogleFonts.plusJakartaSans(
                                   fontSize: 14,
-                                  color: const Color(0xFF1A1A1A),
+                                  color: const Color(0xFF808080),
                                 ),
-                                decoration: InputDecoration(
-                                  hintText: 'Enter promo code',
-                                  hintStyle: GoogleFonts.plusJakartaSans(
-                                    fontSize: 14,
-                                    color: const Color(0xFF808080),
+                                filled: true,
+                                fillColor: Colors.white,
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 14,
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: const BorderSide(
+                                    color: Color(0xFF000000),
+                                    width: 1,
                                   ),
-                                  border: InputBorder.none,
-                                  isDense: true,
-                                  contentPadding: EdgeInsets.zero,
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: const BorderSide(
+                                    color: Color(0xFF000000),
+                                    width: 1.5,
+                                  ),
                                 ),
                               ),
                             ),

@@ -200,17 +200,16 @@ class UserStoreDataSourceImpl implements UserStoreDataSource {
 
     final uid = _currentUid;
     if (uid != null) {
-      try {
-        final targetItem = items.firstWhere((item) => item.id == cartItemId);
-        await firestore
-            .collection('users')
-            .doc(uid)
-            .collection('cart')
-            .doc(cartItemId)
-            .set(targetItem.toJson());
-      } catch (e) {
+      final targetItem = items.firstWhere((item) => item.id == cartItemId);
+      firestore
+          .collection('users')
+          .doc(uid)
+          .collection('cart')
+          .doc(cartItemId)
+          .set(targetItem.toJson())
+          .catchError((e) {
         if (kDebugMode) print('Firestore cart add error: $e');
-      }
+      });
     }
   }
 

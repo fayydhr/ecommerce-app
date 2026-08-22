@@ -1121,108 +1121,181 @@ class HomeView extends GetView<HomeController> {
 
   // ==================== TAB 4: ACCOUNT ====================
   Widget _buildAccountTab() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+    return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Account',
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 32,
-              fontWeight: FontWeight.w800,
-              letterSpacing: -1.5,
-              color: const Color(0xFF1A1A1A),
-            ),
+          // Header (kiri back, tengah Account, kanan notif)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: _buildTabHeader('Account'),
           ),
-          const SizedBox(height: 24),
+
+          // Divider Line E6E6E6 weight 1
           Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF7F7F7),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFFE6E6E6)),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 50,
-                  height: 50,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF1A1A1A),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.person_rounded,
-                    color: Colors.white,
-                    size: 28,
-                  ),
-                ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Obx(
-                    () => Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          controller.currentUser.value?.displayName.isNotEmpty ==
-                                  true
-                              ? controller.currentUser.value!.displayName
-                              : 'User',
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xFF1A1A1A),
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          controller.currentUser.value?.email ??
-                              'user@example.com',
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 13,
-                            color: const Color(0xFF808080),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 32),
-          SizedBox(
+            height: 1,
             width: double.infinity,
-            height: 52,
-            child: ElevatedButton(
-              onPressed: controller.logout,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFEF4444),
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.logout_rounded, color: Colors.white, size: 20),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Logout',
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            color: const Color(0xFFE6E6E6),
           ),
+          const SizedBox(height: 21),
+
+          // 1. My Orders
+          _buildAccountMenuItem(
+            iconPath: 'assets/icons/box.svg',
+            title: 'My Orders',
+            onTap: () {
+              // Action for My Orders
+            },
+          ),
+          const SizedBox(height: 25),
+
+          // Divider Block 1 (h 8, full width, E6E6E6)
+          _buildAccountSectionDivider(),
+          const SizedBox(height: 25),
+
+          // 2. My Details
+          _buildAccountMenuItem(
+            iconPath: 'assets/icons/mydetails.svg',
+            title: 'My Details',
+            onTap: () {
+              // Action for My Details
+            },
+          ),
+          const SizedBox(height: 25),
+          _buildAccountIndentedDivider(),
+          const SizedBox(height: 25),
+
+          // 3. Address Book
+          _buildAccountMenuItem(
+            iconPath: 'assets/icons/addresbook.svg',
+            title: 'Address Book',
+            onTap: () => Get.toNamed(Routes.address),
+          ),
+          const SizedBox(height: 25),
+          _buildAccountIndentedDivider(),
+          const SizedBox(height: 25),
+
+          // 4. Payment Methods
+          _buildAccountMenuItem(
+            iconPath: 'assets/icons/paymentmethod.svg',
+            title: 'Payment Methods',
+            onTap: () {
+              // Action for Payment Methods
+            },
+          ),
+          const SizedBox(height: 25),
+          _buildAccountIndentedDivider(),
+          const SizedBox(height: 25),
+
+          // 5. Notifications
+          _buildAccountMenuItem(
+            iconPath: 'assets/icons/notif.svg',
+            title: 'Notifications',
+            onTap: () => Get.toNamed(Routes.notifications),
+          ),
+          const SizedBox(height: 25),
+
+          // Divider Block 2 (h 8, full width, E6E6E6)
+          _buildAccountSectionDivider(),
+          const SizedBox(height: 25),
+
+          // 6. FAQs
+          _buildAccountMenuItem(
+            iconPath: 'assets/icons/faqs.svg',
+            title: 'FAQs',
+            onTap: () {
+              // Action for FAQs
+            },
+          ),
+          const SizedBox(height: 25),
+          _buildAccountIndentedDivider(),
+          const SizedBox(height: 25),
+
+          // 7. Help Center
+          _buildAccountMenuItem(
+            iconPath: 'assets/icons/help.svg',
+            title: 'Help Center',
+            onTap: () {
+              // Action for Help Center
+            },
+          ),
+          const SizedBox(height: 25),
+
+          // Divider Block 3 (h 8, full width, E6E6E6)
+          _buildAccountSectionDivider(),
+          const SizedBox(height: 25),
+
+          // 8. Logout (Red, no arrow)
+          _buildAccountMenuItem(
+            iconPath: 'assets/icons/logout.svg',
+            title: 'Logout',
+            textColor: const Color(0xFFED1010),
+            hasArrow: false,
+            onTap: controller.logout,
+          ),
+          const SizedBox(height: 35),
         ],
       ),
+    );
+  }
+
+  Widget _buildAccountMenuItem({
+    required String iconPath,
+    required String title,
+    VoidCallback? onTap,
+    bool hasArrow = true,
+    Color textColor = const Color(0xFF1A1A1A),
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Row(
+          children: [
+            SvgPicture.asset(
+              iconPath,
+              width: 24,
+              height: 24,
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Text(
+                title,
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                  color: textColor,
+                ),
+              ),
+            ),
+            if (hasArrow)
+              SvgPicture.asset(
+                'assets/icons/arrow.svg',
+                width: 24,
+                height: 24,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAccountIndentedDivider() {
+    return const Padding(
+      padding: EdgeInsets.only(left: 62, right: 24),
+      child: Divider(
+        height: 1,
+        thickness: 1,
+        color: Color(0xFFE6E6E6),
+      ),
+    );
+  }
+
+  Widget _buildAccountSectionDivider() {
+    return Container(
+      height: 8,
+      width: double.infinity,
+      color: const Color(0xFFE6E6E6),
     );
   }
 

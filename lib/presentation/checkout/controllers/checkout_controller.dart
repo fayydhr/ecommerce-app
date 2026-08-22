@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ecommerce/core/widgets/app_snackbar.dart';
 import 'package:ecommerce/data/datasources/user_store_datasource.dart';
+import 'package:ecommerce/domain/entities/address_entity.dart';
 import 'package:ecommerce/domain/entities/cart_item_entity.dart';
 import 'package:ecommerce/presentation/home/controllers/home_controller.dart';
 
@@ -16,6 +17,44 @@ class CheckoutController extends GetxController {
   final TextEditingController promoController = TextEditingController();
   final RxDouble discount = 0.0.obs;
   final RxBool isPlacingOrder = false.obs;
+
+  // Addresses
+  final RxList<AddressEntity> addresses = <AddressEntity>[
+    const AddressEntity(
+      id: '1',
+      title: 'Home',
+      fullAddress: '925 S Chugach St #APT 10, Alaska 99645',
+      isDefault: true,
+    ),
+    const AddressEntity(
+      id: '2',
+      title: 'Office',
+      fullAddress: '4517 Washington Ave. Manchester, Kentucky 39495',
+      isDefault: false,
+    ),
+    const AddressEntity(
+      id: '3',
+      title: 'Apartment',
+      fullAddress: '2464 Royal Ln. Mesa, New Jersey 45463',
+      isDefault: false,
+    ),
+  ].obs;
+
+  late final Rx<AddressEntity> selectedAddress = addresses.first.obs;
+
+  void selectAddress(AddressEntity address) {
+    selectedAddress.value = address;
+  }
+
+  void addAddress(String title, String fullAddress) {
+    final newAddress = AddressEntity(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      title: title,
+      fullAddress: fullAddress,
+    );
+    addresses.add(newAddress);
+    selectedAddress.value = newAddress;
+  }
 
   @override
   void onInit() {

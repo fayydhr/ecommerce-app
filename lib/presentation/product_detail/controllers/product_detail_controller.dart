@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-import 'package:ecommerce/core/widgets/app_snackbar.dart';
 import 'package:ecommerce/data/datasources/user_store_datasource.dart';
 import 'package:ecommerce/domain/entities/product_entity.dart';
 import 'package:ecommerce/presentation/home/controllers/home_controller.dart';
@@ -60,11 +59,5 @@ class ProductDetailController extends GetxController {
     if (Get.isRegistered<HomeController>()) {
       Get.find<HomeController>().loadCart();
     }
-
-    AppSnackbar.showSuccess(
-      title: 'Added to Cart! 🛍️',
-      message:
-          '${product.title} (Size ${selectedSize.value}) has been saved to your cart.',
-    );
   }
 }
