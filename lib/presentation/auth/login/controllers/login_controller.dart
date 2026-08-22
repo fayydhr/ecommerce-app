@@ -43,10 +43,6 @@ class LoginController extends GetxController {
         );
       },
       (user) {
-        AppSnackbar.showSuccess(
-          title: 'Selamat Datang!',
-          message: 'Berhasil masuk sebagai ${user.displayName}',
-        );
         Get.offAllNamed(Routes.home);
       },
     );
@@ -67,10 +63,6 @@ class LoginController extends GetxController {
         }
       },
       (user) {
-        AppSnackbar.showSuccess(
-          title: 'Selamat Datang!',
-          message: 'Berhasil masuk dengan Google sebagai ${user.displayName}',
-        );
         Get.offAllNamed(Routes.home);
       },
     );

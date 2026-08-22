@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:ecommerce/app/routes/app_routes.dart';
 import 'package:ecommerce/data/datasources/user_store_datasource.dart';
 import 'package:ecommerce/domain/entities/product_entity.dart';
 import 'package:ecommerce/presentation/home/controllers/home_controller.dart';
@@ -57,7 +58,17 @@ class ProductDetailController extends GetxController {
     await userStoreDataSource.addToCart(product, selectedSize.value);
 
     if (Get.isRegistered<HomeController>()) {
-      Get.find<HomeController>().loadCart();
+      final homeController = Get.find<HomeController>();
+      await homeController.loadCart();
+      homeController.changeNavIndex(3);
+      Get.back();
+    } else {
+      Get.offAllNamed(Routes.home);
+      if (Get.isRegistered<HomeController>()) {
+        final homeController = Get.find<HomeController>();
+        await homeController.loadCart();
+        homeController.changeNavIndex(3);
+      }
     }
   }
 }

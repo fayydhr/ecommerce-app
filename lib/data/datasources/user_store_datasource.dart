@@ -234,16 +234,15 @@ class UserStoreDataSourceImpl implements UserStoreDataSource {
 
     final uid = _currentUid;
     if (uid != null) {
-      try {
-        await firestore
-            .collection('users')
-            .doc(uid)
-            .collection('cart')
-            .doc(cartItemId)
-            .update({'quantity': newQty});
-      } catch (e) {
+      firestore
+          .collection('users')
+          .doc(uid)
+          .collection('cart')
+          .doc(cartItemId)
+          .update({'quantity': newQty})
+          .catchError((e) {
         if (kDebugMode) print('Firestore cart quantity update error: $e');
-      }
+      });
     }
   }
 
@@ -255,16 +254,15 @@ class UserStoreDataSourceImpl implements UserStoreDataSource {
 
     final uid = _currentUid;
     if (uid != null) {
-      try {
-        await firestore
-            .collection('users')
-            .doc(uid)
-            .collection('cart')
-            .doc(cartItemId)
-            .delete();
-      } catch (e) {
+      firestore
+          .collection('users')
+          .doc(uid)
+          .collection('cart')
+          .doc(cartItemId)
+          .delete()
+          .catchError((e) {
         if (kDebugMode) print('Firestore cart remove error: $e');
-      }
+      });
     }
   }
 
@@ -274,18 +272,18 @@ class UserStoreDataSourceImpl implements UserStoreDataSource {
 
     final uid = _currentUid;
     if (uid != null) {
-      try {
-        final snapshot = await firestore
-            .collection('users')
-            .doc(uid)
-            .collection('cart')
-            .get();
+      firestore
+          .collection('users')
+          .doc(uid)
+          .collection('cart')
+          .get()
+          .then((snapshot) {
         for (var doc in snapshot.docs) {
-          await doc.reference.delete();
+          doc.reference.delete();
         }
-      } catch (e) {
+      }).catchError((e) {
         if (kDebugMode) print('Firestore clear cart error: $e');
-      }
+      });
     }
   }
 

@@ -54,10 +54,6 @@ class RegisterController extends GetxController {
         );
       },
       (user) {
-        AppSnackbar.showSuccess(
-          title: 'Pendaftaran Berhasil!',
-          message: 'Selamat datang di ShopFlow, ${user.displayName}',
-        );
         Get.offAllNamed(Routes.home);
       },
     );
@@ -78,10 +74,6 @@ class RegisterController extends GetxController {
         }
       },
       (user) {
-        AppSnackbar.showSuccess(
-          title: 'Selamat Datang!',
-          message: 'Berhasil mendaftar dengan Google sebagai ${user.displayName}',
-        );
         Get.offAllNamed(Routes.home);
       },
     );
